@@ -487,7 +487,7 @@ class Karaoke:
 		getString2 = lambda ii: os.langs.get(client_lang, os.langs['en_US'])[ii]
 		self.downloading_songs[song_url] = 1
 		dl_path = "%(title)s---%(id)s.%(ext)s"
-		opt_quality = ['-f', 'bestvideo[height<=1080]+bestaudio[abr<=160]'] if high_quality else ['-f', 'mp4+m4a']
+		opt_quality = ['-f', 'bv*[vcodec^=avc1]+ba[acodec^=mp4a]/b[vcodec^=avc1][acodec^=mp4a]'] if high_quality else ['-f', 'b[vcodec^=avc1][acodec^=mp4a]/bv*[vcodec^=avc1]+ba[acodec^=mp4a]']
 		opt_sub = ['--sub-langs', 'all', '--embed-subs'] if include_subtitles else []
 		cmd = ['--fixup', 'force', '--socket-timeout', '3', '-R', 'infinite', '--remux-video', 'mp4'] + self.cookies_opt + opt_quality +\
 		      ["-o", self.download_path+'tmp/'+dl_path] + opt_sub + [song_url]
@@ -1094,7 +1094,7 @@ class Karaoke:
 			return None
 
 	def vocal_restart(self):
-		if self.platform == 'windows' or self.run_vocal:
+		if self.run_vocal:
 			import vocal_splitter
 			if self.vocal_process is not None and self.vocal_process.is_alive():
 				self.vocal_process.kill()
@@ -1169,7 +1169,7 @@ class Karaoke:
 		self.running = True
 
 		# Windows does not have tmux, vocal splitter can only be invoked from the main program
-		if self.platform == 'windows' or self.run_vocal:
+		if self.run_vocal:
 			Try(lambda: self.vocal_restart())
 
 		while self.running:
