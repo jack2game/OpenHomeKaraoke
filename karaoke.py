@@ -416,6 +416,10 @@ class Karaoke:
 		return render
 
 	def call_yt_dlp(self, argv, get_stdout = False):
+		# Force IPv4: on many networks/hosts IPv6 to YouTube stalls for 1-2 min per
+		# request before falling back, which makes search/downloads appear to hang or
+		# return nothing. Forcing IPv4 avoids the stall.
+		argv = ['-4'] + argv
 		if self.youtubedl_path:
 			if get_stdout:
 				return subprocess.check_output([self.youtubedl_path]+argv).decode("utf-8")
